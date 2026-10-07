@@ -1,120 +1,77 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>¿Quién rompe la curva?</title>
+<title>¿Quién rompe la curva? · LaLiga</title>
 <style>
-body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;margin:0;background:#f5f7fb;color:#172033}
-main{max-width:1180px;margin:auto;padding:22px}h1{margin:0 0 5px}.sub{color:#687386;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px}.card{background:#fff;border:1px solid #dce3ed;border-radius:15px;padding:15px}
-button,select{font:inherit;padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;background:white;cursor:pointer}
-#messiBtn.active{background:#f4b942;font-weight:700}.actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
-.list{max-height:500px;overflow:auto}.league{font-weight:750;margin:13px 0 4px}.player{display:flex;gap:8px;padding:5px 0;font-size:14px}
-.kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}.kpi{background:#f4f6fa;padding:8px 11px;border-radius:9px}
-svg{width:100%;height:auto}.axis{stroke:#8794a7}.curve{fill:none;stroke:#38598b;stroke-width:3}.kde{fill:none;stroke:#27866f;stroke-width:3}.active{background:#eaf0fa;font-weight:700}.mu{stroke:#4b5563;stroke-dasharray:5 5}
-.dot{fill:#d55262;stroke:#fff;stroke-width:2}.messi{fill:#f4b942;stroke:#7a4c00;stroke-width:3}.lab{font-size:11px;fill:#263449}.messiLab{font-size:14px;font-weight:800;fill:#7a4c00}
-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}th,td{padding:7px;border-bottom:1px solid #edf0f4;text-align:left}
-.note{font-size:13px;color:#687386;margin:8px 0}@media(max-width:800px){.grid{grid-template-columns:1fr}}
-
-.player{border-radius:7px;padding:6px 5px}.player:hover{background:#f5f7fb}
-.league{padding-top:8px;border-top:1px solid #edf0f4}
-.chart-title{font-size:15px;font-weight:750;margin:4px 0 0}
-.chart-sub{font-size:12px;color:#687386;margin:2px 0 6px}
-.player-detail{min-height:48px;margin:8px 0;padding:9px 11px;border-radius:10px;background:#f7f9fc;border:1px solid #e5eaf1;font-size:13px}
-.axis-title{font-size:12px;font-weight:700;fill:#4b5563}.tick{font-size:10px;fill:#687386}.tickline{stroke:#e5e9ef;stroke-width:1}
-.dot{cursor:pointer}.dot:hover{stroke:#172033;stroke-width:3}
-@media(max-width:900px){.grid{grid-template-columns:1fr!important}}
+:root{--bg:#07111f;--panel:#0d1a2b;--panel2:#111f32;--text:#f6f8fc;--muted:#9aabc2;--grid:#26364c;--cyan:#55d6be;--blue:#70a5ff;--gold:#ffc857;--red:#ff647c;--white:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 75% 0,#142b4c 0,#07111f 38%);color:var(--text)}
+main{max-width:1450px;margin:auto;padding:26px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:18px}
+.eyebrow{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);font-weight:800}.hero h1{font-size:clamp(30px,4vw,55px);line-height:.98;margin:7px 0 10px;letter-spacing:-.045em}
+.hero p{margin:0;color:var(--muted);max-width:800px}.badge{border:1px solid #30445f;background:#0b1727;border-radius:999px;padding:9px 13px;color:#cbd7e8;font-size:13px;white-space:nowrap}
+.layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px}.panel{background:rgba(13,26,43,.94);border:1px solid #20334c;border-radius:18px;box-shadow:0 16px 45px rgba(0,0,0,.18)}
+.controls{padding:16px}.controls h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#c3d0e1;margin:4px 0 8px}
+select,input,button{font:inherit}select,input[type=text]{width:100%;background:#081421;border:1px solid #2a3d56;color:var(--text);padding:10px;border-radius:10px}
+.btns{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 14px}button{border:1px solid #304761;background:#102039;color:#dbe6f5;padding:8px 10px;border-radius:10px;cursor:pointer}
+button:hover,button.active{border-color:#65b9ff;background:#183255;color:#fff}.legend-btn.messi.active{border-color:var(--gold);color:var(--gold)}.legend-btn.cr7.active{border-color:var(--red);color:#ff93a4}
+.list{max-height:485px;overflow:auto;padding-right:3px}.season{margin:12px 0 5px;color:#7e93ad;font-size:11px;font-weight:800;letter-spacing:.09em}
+.check{display:flex;gap:8px;align-items:flex-start;padding:6px;border-radius:8px;font-size:12px;color:#d7e1ee}.check:hover{background:#13243a}.check small{display:block;color:#7f91aa}
+.content{padding:18px}.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px}.kpi{background:#091624;border:1px solid #1e3148;border-radius:12px;padding:10px 12px;color:#8fa1b9;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.kpi b{display:block;color:#fff;font-size:20px;letter-spacing:-.02em;margin-top:3px}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:6px 0 5px}
+.toolbar .btns{margin:0}.key{font-size:12px;color:var(--muted)}.sw{display:inline-block;width:20px;border-top:3px solid;margin:0 5px 2px 12px;vertical-align:middle}
+.chartbox{background:linear-gradient(180deg,#0a1727,#08131f);border:1px solid #1e3148;border-radius:16px;padding:8px;overflow:hidden}
+svg{width:100%;height:auto;display:block}.axis{stroke:#53657c}.gridline{stroke:#1a2a3e}.normal{fill:none;stroke:var(--blue);stroke-width:3;opacity:.9}.kde{fill:none;stroke:var(--cyan);stroke-width:4}.fillkde{fill:rgba(85,214,190,.07)}
+.mean{stroke:#8a9bb0;stroke-dasharray:5 6}.dot{fill:#b7c8dc;stroke:#07111f;stroke-width:2;cursor:pointer}.dot.messi{fill:var(--gold)}.dot.cr7{fill:var(--red)}
+.label{font-size:11px;fill:#dce6f3;font-weight:700}.label.messi{fill:var(--gold)}.label.cr7{fill:#ff8397}.tick{font-size:10px;fill:#788ba5}.axis-title{font-size:12px;fill:#9fb0c5;font-weight:700}
+.detail{margin-top:10px;display:flex;justify-content:space-between;gap:15px;align-items:center;background:#091624;border:1px solid #1e3148;border-radius:12px;padding:10px 13px;color:#b4c2d4;font-size:13px}.detail b{color:#fff}.zpill{font-size:18px;font-weight:850;color:var(--cyan)}
+.tablewrap{margin-top:14px;max-height:290px;overflow:auto;border:1px solid #1e3148;border-radius:12px}table{width:100%;border-collapse:collapse;font-size:12px}th{position:sticky;top:0;background:#102039;color:#9fb0c5;text-align:left;padding:8px}td{padding:8px;border-top:1px solid #182a3e}
+.note{font-size:12px;color:#8194ad;line-height:1.45;margin-top:10px}.accent{color:var(--cyan)}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.list{max-height:300px}.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:600px){main{padding:14px}.hero{display:block}.badge{display:inline-block;margin-top:10px}.kpis{grid-template-columns:repeat(2,1fr)}}
 </style></head><body><main>
-<h1>⚽ ¿Quién rompe la curva?</h1><div class="sub">Top 20 inicial · Big 5 2025/26 · Distribución empírica frente a normal teórica</div>
-<div class="grid"><section class="card">
-<label><b>Liga</b><br><select id="league"><option value="all">Todas</option><option>Premier League</option><option>LaLiga</option><option>Bundesliga</option><option>Serie A</option><option>Ligue 1</option></select></label>
-<div class="actions"><button id="top20" type="button">Top 20</button><button id="all" type="button">Todos (25)</button><button id="none" type="button">Ninguno</button></div>
-<div style="margin:10px 0"><b>Visualización</b><div class="actions">
-<button id="realBtn" type="button">Real (KDE)</button>
-<button id="normalBtn" type="button">Normal teórica</button>
-<button id="bothBtn" type="button" class="active">Ambas</button></div></div>
-<button id="messiBtn" type="button">⭐ Añadir Messi 2011/12</button>
-<div class="note">Messi: <b>69 G+A</b> (50 goles + 19 asistencias).
-<div style="margin-top:8px"><label><b>Messi:</b> <select id="messiMode"><option value="external">Comparación externa</option><option value="sample">Incluir en la muestra</option></select></label></div></div>
-<div id="list" class="list"></div></section>
-<section class="card"><div class="kpis"><div class="kpi">n = <b id="n"></b></div><div class="kpi">Media = <b id="mean"></b></div><div class="kpi">Mediana = <b id="median">—</b></div><div class="kpi">DT = <b id="sd"></b></div><div class="kpi">Asimetría = <b id="skew">—</b></div><div class="kpi">Curtosis† = <b id="kurt">—</b></div><div class="kpi">Z Messi = <b id="mz">—</b></div></div>
-<div class="chart-title">Distribución de Goles + Asistencias</div>
-<div class="chart-sub">Pulsa sobre cualquier punto para identificar al jugador. Solo se etiquetan automáticamente los valores más extremos para evitar solapamientos.</div>
-<div class="legend"><span><i class="sw" style="border-color:#27866f"></i>Distribución real (KDE)</span><span><i class="sw" style="border-color:#315d9a"></i>Normal teórica</span></div><div id="playerDetail" class="player-detail">Selecciona un punto de la gráfica para ver jugador, liga, club, G+A y puntuación Z.</div>
-<svg id="chart" viewBox="0 0 820 430"></svg>
-<table><thead><tr><th>Jugador</th><th>Liga</th><th>G+A</th><th>Z</th></tr></thead><tbody id="tbody"></tbody></table>
+<div class="hero"><div><div class="eyebrow">Metodología de la Investigación · LaLiga</div><h1>¿Quién rompe<br>la curva?</h1><p>Top 3 de <b>Goles + Asistencias</b> por temporada, 2013/14–2024/25. Compara la distribución observada con una normal teórica y descubre qué temporadas fueron realmente excepcionales.</p></div><div class="badge">36 temporadas-jugador · 12 temporadas completas</div></div>
+<div class="layout"><aside class="panel controls">
+<h3>Temporada</h3><select id="season"><option value="all">Todas (2013/14–2024/25)</option></select>
+<h3>Buscar jugador</h3><input id="search" type="text" placeholder="Messi, Ronaldo, Benzema…">
+<div class="btns"><button id="all">Seleccionar todos</button><button id="none">Ninguno</button></div>
+<h3>Destacar</h3><div class="btns"><button class="legend-btn messi active" id="messi">★ Messi</button><button class="legend-btn cr7 active" id="cr7">★ Cristiano</button></div>
+<div id="list" class="list"></div>
+</aside>
+<section class="panel content">
+<div class="kpis"><div class="kpi">Observaciones<b id="n">—</b></div><div class="kpi">Media G+A<b id="mean">—</b></div><div class="kpi">Mediana<b id="median">—</b></div><div class="kpi">DT<b id="sd">—</b></div><div class="kpi">Asimetría<b id="skew">—</b></div><div class="kpi">Curtosis†<b id="kurt">—</b></div></div>
+<div class="toolbar"><div class="btns"><button data-mode="kde">Distribución real</button><button data-mode="normal">Normal teórica</button><button data-mode="both" class="active">Ambas</button></div>
+<div class="key"><span class="sw" style="border-color:#55d6be"></span>Distribución real <span class="sw" style="border-color:#70a5ff"></span>Normal</div></div>
+<div class="chartbox"><svg id="chart" viewBox="0 0 1000 500"></svg></div>
+<div id="detail" class="detail"><span>Pulsa sobre un punto para identificar la temporada del jugador.</span><span class="zpill">Z = —</span></div>
+<div class="note"><span class="accent">Lectura:</span> cada punto es una temporada-jugador. La curva verde es la distribución real de los datos, representada mediante una curva suavizada; no tiene por qué ser simétrica. La azul es la normal con la misma media y DT. †Curtosis = exceso de curtosis: una normal tiene valor 0.</div>
+<div class="tablewrap"><table><thead><tr><th>Temporada</th><th>Jugador</th><th>Club</th><th>G+A</th><th>Z</th></tr></thead><tbody id="tbody"></tbody></table></div>
 </section></div></main>
 <script>
-(function(){
-const players=[{"league": "Premier League", "name": "Erling Haaland", "club": "Manchester City", "ga": 35}, {"league": "Premier League", "name": "Bruno Fernandes", "club": "Manchester United", "ga": 30}, {"league": "Premier League", "name": "Igor Thiago", "club": "Brentford", "ga": 23}, {"league": "Premier League", "name": "Antoine Semenyo", "club": "Manchester City", "ga": 21}, {"league": "Premier League", "name": "João Pedro", "club": "Chelsea", "ga": 20}, {"league": "LaLiga", "name": "Kylian Mbappé", "club": "Real Madrid", "ga": 30}, {"league": "LaLiga", "name": "Lamine Yamal", "club": "Barcelona", "ga": 27}, {"league": "LaLiga", "name": "Vedat Muriqi", "club": "Mallorca", "ga": 24}, {"league": "LaLiga", "name": "Vinícius Júnior", "club": "Real Madrid", "ga": 21}, {"league": "LaLiga", "name": "Mikel Oyarzabal", "club": "Real Sociedad", "ga": 19}, {"league": "Bundesliga", "name": "Harry Kane", "club": "Bayern München", "ga": 41}, {"league": "Bundesliga", "name": "Michael Olise", "club": "Bayern München", "ga": 34}, {"league": "Bundesliga", "name": "Luis Díaz", "club": "Bayern München", "ga": 29}, {"league": "Bundesliga", "name": "Deniz Undav", "club": "VfB Stuttgart", "ga": 26}, {"league": "Bundesliga", "name": "Christoph Baumgartner", "club": "RB Leipzig", "ga": 22}, {"league": "Serie A", "name": "Federico Dimarco", "club": "Inter", "ga": 24}, {"league": "Serie A", "name": "Lautaro Martínez", "club": "Inter", "ga": 23}, {"league": "Serie A", "name": "Marcus Thuram", "club": "Inter", "ga": 19}, {"league": "Serie A", "name": "Nico Paz", "club": "Como", "ga": 18}, {"league": "Serie A", "name": "Rasmus Højlund", "club": "Napoli", "ga": 17}, {"league": "Ligue 1", "name": "Estéban Lepaul", "club": "Rennes", "ga": 26}, {"league": "Ligue 1", "name": "Mason Greenwood", "club": "Marseille", "ga": 23}, {"league": "Ligue 1", "name": "Florian Thauvin", "club": "Lens", "ga": 17}, {"league": "Ligue 1", "name": "Joaquín Panichelli", "club": "Strasbourg", "ga": 17}, {"league": "Ligue 1", "name": "Folarin Balogun", "club": "Monaco", "ga": 17}];
-const top20idx=players.map((p,i)=>({i,ga:p.ga})).sort((a,b)=>b.ga-a.ga).slice(0,20).map(x=>x.i);
-const selected=new Set(top20idx);
-let showMessi=false, viewMode="both";
-const MESSI=69;
-const list=document.getElementById('list'), league=document.getElementById('league'), svg=document.getElementById('chart');
-function renderList(){
- list.innerHTML='';
- [...new Set(players.map(p=>p.league))].forEach(g=>{
-   if(league.value!=='all'&&league.value!==g)return;
-   const h=document.createElement('div');h.className='league';h.textContent=g;list.appendChild(h);
-   players.forEach((p,i)=>{if(p.league!==g)return;
-     const l=document.createElement('label');l.className='player';
-     const c=document.createElement('input');c.type='checkbox';c.checked=selected.has(i);
-     c.addEventListener('change',()=>{c.checked?selected.add(i):selected.delete(i);draw();});
-     l.appendChild(c);l.appendChild(document.createTextNode(p.name+' — '+p.ga+' G+A'));list.appendChild(l);
-   });
- });
-}
-function median(v){const b=[...v].sort((a,b)=>a-b),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2;}
+const players=[{"season": "2013-14", "name": "Cristiano Ronaldo", "club": "Real Madrid", "ga": 40}, {"season": "2013-14", "name": "Lionel Messi", "club": "Barcelona", "ga": 39}, {"season": "2013-14", "name": "Alexis Sánchez", "club": "Barcelona", "ga": 30}, {"season": "2014-15", "name": "Cristiano Ronaldo", "club": "Real Madrid", "ga": 63}, {"season": "2014-15", "name": "Lionel Messi", "club": "Barcelona", "ga": 61}, {"season": "2014-15", "name": "Luis Suárez", "club": "Barcelona", "ga": 30}, {"season": "2015-16", "name": "Luis Suárez", "club": "Barcelona", "ga": 57}, {"season": "2015-16", "name": "Cristiano Ronaldo", "club": "Real Madrid", "ga": 44}, {"season": "2015-16", "name": "Lionel Messi", "club": "Barcelona", "ga": 40}, {"season": "2016-17", "name": "Lionel Messi", "club": "Barcelona", "ga": 46}, {"season": "2016-17", "name": "Luis Suárez", "club": "Barcelona", "ga": 40}, {"season": "2016-17", "name": "Cristiano Ronaldo", "club": "Real Madrid", "ga": 31}, {"season": "2017-18", "name": "Lionel Messi", "club": "Barcelona", "ga": 46}, {"season": "2017-18", "name": "Luis Suárez", "club": "Barcelona", "ga": 37}, {"season": "2017-18", "name": "Cristiano Ronaldo", "club": "Real Madrid", "ga": 31}, {"season": "2018-19", "name": "Lionel Messi", "club": "Barcelona", "ga": 49}, {"season": "2018-19", "name": "Luis Suárez", "club": "Barcelona", "ga": 27}, {"season": "2018-19", "name": "Karim Benzema", "club": "Real Madrid", "ga": 27}, {"season": "2019-20", "name": "Lionel Messi", "club": "Barcelona", "ga": 45}, {"season": "2019-20", "name": "Karim Benzema", "club": "Real Madrid", "ga": 29}, {"season": "2019-20", "name": "Luis Suárez", "club": "Barcelona", "ga": 24}, {"season": "2020-21", "name": "Lionel Messi", "club": "Barcelona", "ga": 39}, {"season": "2020-21", "name": "Karim Benzema", "club": "Real Madrid", "ga": 32}, {"season": "2020-21", "name": "Gerard Moreno", "club": "Villarreal", "ga": 30}, {"season": "2021-22", "name": "Karim Benzema", "club": "Real Madrid", "ga": 39}, {"season": "2021-22", "name": "Vinícius Júnior", "club": "Real Madrid", "ga": 27}, {"season": "2021-22", "name": "Iago Aspas", "club": "Celta Vigo", "ga": 23}, {"season": "2022-23", "name": "Antoine Griezmann", "club": "Atlético Madrid", "ga": 31}, {"season": "2022-23", "name": "Robert Lewandowski", "club": "Barcelona", "ga": 30}, {"season": "2022-23", "name": "Karim Benzema", "club": "Real Madrid", "ga": 22}, {"season": "2023-24", "name": "Artem Dovbyk", "club": "Girona", "ga": 32}, {"season": "2023-24", "name": "Alexander Sørloth", "club": "Villarreal", "ga": 29}, {"season": "2023-24", "name": "Robert Lewandowski", "club": "Barcelona", "ga": 27}, {"season": "2024-25", "name": "Kylian Mbappé", "club": "Real Madrid", "ga": 34}, {"season": "2024-25", "name": "Robert Lewandowski", "club": "Barcelona", "ga": 29}, {"season": "2024-25", "name": "Raphinha", "club": "Barcelona", "ga": 27}];
+const selected=new Set(players.map((_,i)=>i));let mode='both',showMessi=true,showCR7=true;
+const $=id=>document.getElementById(id),svg=$('chart');
+[...new Set(players.map(p=>p.season))].forEach(s=>{let o=document.createElement('option');o.value=s;o.textContent=s;$('season').appendChild(o)});
+function med(v){let b=[...v].sort((a,b)=>a-b),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2}
+function stats(v){let n=v.length,m=v.reduce((a,b)=>a+b,0)/n,p=Math.sqrt(v.reduce((s,x)=>s+(x-m)**2,0)/n),sd=Math.sqrt(v.reduce((s,x)=>s+(x-m)**2,0)/(n-1));return{n,m,med:med(v),sd,sk:p?v.reduce((s,x)=>s+((x-m)/p)**3,0)/n:0,ku:p?v.reduce((s,x)=>s+((x-m)/p)**4,0)/n-3:0,p}}
+function visibleIndices(){let sea=$('season').value,q=$('search').value.trim().toLowerCase();return players.map((p,i)=>({p,i})).filter(x=>(sea==='all'||x.p.season===sea)&&(!q||(x.p.name+' '+x.p.club).toLowerCase().includes(q))).map(x=>x.i)}
+function renderList(){let ids=visibleIndices(),groups={};ids.forEach(i=>(groups[players[i].season]??=[]).push(i));$('list').innerHTML='';Object.entries(groups).forEach(([s,arr])=>{let h=document.createElement('div');h.className='season';h.textContent=s;$('list').appendChild(h);arr.forEach(i=>{let p=players[i],l=document.createElement('label');l.className='check';l.innerHTML='<input type="checkbox" '+(selected.has(i)?'checked':'')+'><span><b>'+p.name+'</b><small>'+p.club+' · '+p.ga+' G+A</small></span>';l.querySelector('input').onchange=e=>{e.target.checked?selected.add(i):selected.delete(i);draw()};$('list').appendChild(l)})})}
 function draw(){
- let a=[...selected].map(i=>players[i]);
- const includeMessi=showMessi&&document.getElementById('messiMode').value==='sample';
- let sample=includeMessi?[...a,{name:'Lionel Messi (2011/12)',league:'Histórico',ga:MESSI}]:[...a];
- document.getElementById('n').textContent=sample.length;
- if(sample.length<3){['mean','median','sd','skew','kurt','mz'].forEach(id=>document.getElementById(id).textContent='—');svg.innerHTML='<text x="410" y="210" text-anchor="middle">Selecciona al menos 3 jugadores</text>';return;}
- const vals=sample.map(p=>p.ga), n=vals.length, mean=vals.reduce((x,y)=>x+y,0)/n;
- const popsd=Math.sqrt(vals.reduce((q,x)=>q+(x-mean)**2,0)/n);
- const sd=Math.sqrt(vals.reduce((q,x)=>q+(x-mean)**2,0)/(n-1));
- const skew=popsd?vals.reduce((q,x)=>q+((x-mean)/popsd)**3,0)/n:0;
- const kurt=popsd?vals.reduce((q,x)=>q+((x-mean)/popsd)**4,0)/n-3:0;
- document.getElementById('mean').textContent=mean.toFixed(2);document.getElementById('median').textContent=median(vals).toFixed(2);
- document.getElementById('sd').textContent=sd.toFixed(2);document.getElementById('skew').textContent=skew.toFixed(2);document.getElementById('kurt').textContent=kurt.toFixed(2);
- document.getElementById('mz').textContent=showMessi?((MESSI-mean)/sd).toFixed(2):'—';
- const left=55,right=30,base=330,W=820,top=70, rawMin=Math.min(...vals),rawMax=Math.max(...vals,showMessi?MESSI:-Infinity),span=Math.max(8,rawMax-rawMin);
- const xmin=Math.max(0,rawMin-span*.22),xmax=rawMax+span*.18,X=x=>left+(x-xmin)/(xmax-xmin)*(W-left-right);
- const sorted=[...vals].sort((x,y)=>x-y),q1=sorted[Math.floor((n-1)*.25)],q3=sorted[Math.floor((n-1)*.75)],iqr=q3-q1;
- const robust=Math.min(popsd,iqr>0?iqr/1.34:popsd)||1,h=Math.max(.8,.9*robust*Math.pow(n,-.2));
- const g=u=>Math.exp(-.5*u*u)/Math.sqrt(2*Math.PI),kde=x=>vals.reduce((q,v)=>q+g((x-v)/h),0)/(n*h);
- const normal=x=>Math.exp(-.5*((x-mean)/sd)**2)/(sd*Math.sqrt(2*Math.PI));
- let pts=[],maxD=0;for(let j=0;j<=280;j++){let x=xmin+(xmax-xmin)*j/280,k=kde(x),nd=normal(x);pts.push({x,k,nd});maxD=Math.max(maxD,k,nd);}
- const Y=d=>base-(d/maxD)*(base-top);let kp='',np='';pts.forEach((p,j)=>{kp+=(j?'L':'M')+X(p.x)+','+Y(p.k);np+=(j?'L':'M')+X(p.x)+','+Y(p.nd);});
- svg.innerHTML='<line x1="'+left+'" y1="'+base+'" x2="'+(W-right)+'" y2="'+base+'" class="axis"/>';
- if(viewMode==='real'||viewMode==='both')svg.innerHTML+='<path d="'+kp+'" class="kde"/>';
- if(viewMode==='normal'||viewMode==='both')svg.innerHTML+='<path d="'+np+'" class="curve"/>';
- svg.innerHTML+='<line x1="'+X(mean)+'" y1="'+top+'" x2="'+X(mean)+'" y2="'+base+'" class="mu"/><text x="'+X(mean)+'" y="'+(base+22)+'" text-anchor="middle" class="lab">μ</text>';
- const tickStep=10;
- for(let tv=Math.ceil(xmin/tickStep)*tickStep;tv<=xmax;tv+=tickStep){
-   svg.innerHTML+='<line x1="'+X(tv)+'" y1="'+base+'" x2="'+X(tv)+'" y2="'+(base+5)+'" class="axis"/><text x="'+X(tv)+'" y="'+(base+19)+'" text-anchor="middle" class="tick">'+tv+'</text>';
- }
- svg.innerHTML+='<text x="'+((left+W-right)/2)+'" y="'+(base+45)+'" text-anchor="middle" class="axis-title">Goles + Asistencias (G+A)</text>';
- const ranked=[...a].sort((u,v)=>v.ga-u.ga);
- const labelNames=new Set(ranked.slice(0,5).map(p=>p.name));
- a.forEach((p,k)=>{let x=X(p.ga), idx=players.indexOf(p);
-   svg.innerHTML+='<circle cx="'+x+'" cy="'+base+'" r="6" class="dot" data-player="'+idx+'"/>';
-   if(labelNames.has(p.name)) svg.innerHTML+='<text x="'+x+'" y="'+(base-15-(k%3)*15)+'" text-anchor="middle" class="lab">'+p.name+'</text>';
- });
- if(showMessi){let x=X(MESSI);svg.innerHTML+='<line x1="'+x+'" y1="95" x2="'+x+'" y2="'+base+'" stroke="#f4b942" stroke-width="2" stroke-dasharray="5 4"/><circle cx="'+x+'" cy="'+base+'" r="10" class="messi"/><text x="'+x+'" y="72" text-anchor="middle" class="messiLab">MESSI · 69 G+A</text>';}
- document.getElementById('tbody').innerHTML=[...sample].sort((x,y)=>y.ga-x.ga).map(p=>'<tr><td>'+p.name+'</td><td>'+p.league+'</td><td>'+p.ga+'</td><td>'+((p.ga-mean)/sd).toFixed(2)+'</td></tr>').join('');
- svg.querySelectorAll('[data-player]').forEach(el=>el.addEventListener('click',()=>{
-   const p=players[Number(el.dataset.player)],z=(p.ga-mean)/sd;
-   document.getElementById('playerDetail').innerHTML='<b>'+p.name+'</b> · '+p.club+' · '+p.league+' &nbsp; | &nbsp; <b>'+p.ga+' G+A</b> &nbsp; | &nbsp; Z = <b>'+z.toFixed(2)+'</b>';
- }));
+ let arr=[...selected].map(i=>({...players[i],idx:i})),v=arr.map(p=>p.ga);
+ if(v.length<3){svg.innerHTML='<text x="500" y="250" text-anchor="middle" fill="#9aabc2">Selecciona al menos 3 observaciones</text>';return}
+ let st=stats(v);$('n').textContent=st.n;$('mean').textContent=st.m.toFixed(2);$('median').textContent=st.med.toFixed(2);$('sd').textContent=st.sd.toFixed(2);$('skew').textContent=st.sk.toFixed(2);$('kurt').textContent=st.ku.toFixed(2);
+ let L=62,R=25,B=390,T=55,W=1000,mn=Math.min(...v),mx=Math.max(...v),span=Math.max(10,mx-mn),xmin=Math.max(0,mn-span*.16),xmax=mx+span*.14,X=x=>L+(x-xmin)/(xmax-xmin)*(W-L-R);
+ let sorted=[...v].sort((a,b)=>a-b),q1=sorted[Math.floor((v.length-1)*.25)],q3=sorted[Math.floor((v.length-1)*.75)],rob=Math.min(st.p,(q3-q1)>0?(q3-q1)/1.34:st.p)||1,h=Math.max(1,.9*rob*Math.pow(v.length,-.2));
+ let g=u=>Math.exp(-.5*u*u)/Math.sqrt(2*Math.PI),kde=x=>v.reduce((s,a)=>s+g((x-a)/h),0)/(v.length*h),norm=x=>Math.exp(-.5*((x-st.m)/st.sd)**2)/(st.sd*Math.sqrt(2*Math.PI));
+ let pts=[],maxd=0;for(let j=0;j<=320;j++){let x=xmin+(xmax-xmin)*j/320,k=kde(x),n=norm(x);pts.push({x,k,n});maxd=Math.max(maxd,k,n)}let Y=d=>B-d/maxd*(B-T),kp='',np='';pts.forEach((p,j)=>{kp+=(j?'L':'M')+X(p.x)+','+Y(p.k);np+=(j?'L':'M')+X(p.x)+','+Y(p.n)});
+ svg.innerHTML='';for(let tv=Math.ceil(xmin/5)*5;tv<=xmax;tv+=5)svg.innerHTML+='<line x1="'+X(tv)+'" y1="'+T+'" x2="'+X(tv)+'" y2="'+B+'" class="gridline"/><text x="'+X(tv)+'" y="'+(B+20)+'" text-anchor="middle" class="tick">'+tv+'</text>';
+ svg.innerHTML+='<line x1="'+L+'" y1="'+B+'" x2="'+(W-R)+'" y2="'+B+'" class="axis"/>';
+ if(mode==='kde'||mode==='both')svg.innerHTML+='<path d="'+kp+' L '+X(xmax)+','+B+' L '+X(xmin)+','+B+' Z" class="fillkde"/><path d="'+kp+'" class="kde"/>';
+ if(mode==='normal'||mode==='both')svg.innerHTML+='<path d="'+np+'" class="normal"/>';
+ svg.innerHTML+='<line x1="'+X(st.m)+'" y1="'+T+'" x2="'+X(st.m)+'" y2="'+B+'" class="mean"/><text x="'+X(st.m)+'" y="'+(B+38)+'" text-anchor="middle" class="tick">μ = '+st.m.toFixed(1)+'</text><text x="'+((L+W-R)/2)+'" y="472" text-anchor="middle" class="axis-title">Goles + Asistencias (G+A) en una temporada de LaLiga</text>';
+ let labelSet=new Set([...arr].sort((a,b)=>b.ga-a.ga).slice(0,7).map(p=>p.idx));
+ arr.forEach((p,k)=>{let cls='dot'+(p.name==='Lionel Messi'&&showMessi?' messi':'')+(p.name==='Cristiano Ronaldo'&&showCR7?' cr7':'');svg.innerHTML+='<circle data-i="'+p.idx+'" cx="'+X(p.ga)+'" cy="'+(B-(k%3)*5)+'" r="6" class="'+cls+'"/>';if(labelSet.has(p.idx)&&((p.name!=='Lionel Messi'||showMessi)&&(p.name!=='Cristiano Ronaldo'||showCR7)))svg.innerHTML+='<text x="'+X(p.ga)+'" y="'+(B-18-(k%4)*17)+'" text-anchor="middle" class="label'+(p.name==='Lionel Messi'?' messi':p.name==='Cristiano Ronaldo'?' cr7':'')+'">'+p.name+' · '+p.season+'</text>'});
+ svg.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{let p=players[+el.dataset.i],z=(p.ga-st.m)/st.sd;$('detail').innerHTML='<span><b>'+p.name+'</b> · '+p.club+' · '+p.season+' · <b>'+p.ga+' G+A</b> · diferencia con la media: <b>'+(p.ga-st.m>=0?'+':'')+(p.ga-st.m).toFixed(2)+' G+A</b></span><span class="zpill">Z = '+z.toFixed(2)+'</span>'});
+ $('tbody').innerHTML=[...arr].sort((a,b)=>b.ga-a.ga).map(p=>'<tr><td>'+p.season+'</td><td>'+p.name+'</td><td>'+p.club+'</td><td><b>'+p.ga+'</b></td><td>'+((p.ga-st.m)/st.sd).toFixed(2)+'</td></tr>').join('');
 }
-['real','normal','both'].forEach(m=>document.getElementById(m+'Btn').addEventListener('click',function(){viewMode=m;['real','normal','both'].forEach(x=>document.getElementById(x+'Btn').classList.toggle('active',x===m));draw();}));
-document.getElementById('messiMode').addEventListener('change',draw);
-document.getElementById('messiBtn').addEventListener('click',function(){
- showMessi=!showMessi;this.classList.toggle('active',showMessi);this.textContent=showMessi?'⭐ Quitar Messi 2011/12':'⭐ Añadir Messi 2011/12';draw();
-});
-document.getElementById('all').addEventListener('click',()=>{players.forEach((p,i)=>selected.add(i));renderList();draw();});
-document.getElementById('none').addEventListener('click',()=>{selected.clear();renderList();draw();});
-league.addEventListener('change',renderList);
+$('season').onchange=()=>{renderList()};$('search').oninput=renderList;
+$('all').onclick=()=>{visibleIndices().forEach(i=>selected.add(i));renderList();draw()};$('none').onclick=()=>{visibleIndices().forEach(i=>selected.delete(i));renderList();draw()};
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));draw()});
+$('messi').onclick=function(){showMessi=!showMessi;this.classList.toggle('active',showMessi);draw()};$('cr7').onclick=function(){showCR7=!showCR7;this.classList.toggle('active',showCR7);draw()};
 renderList();draw();
-})();
 </script></body></html>
