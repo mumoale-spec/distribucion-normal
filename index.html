@@ -3,32 +3,50 @@
 <style>
 body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;margin:0;background:#f5f7fb;color:#172033}
 main{max-width:1180px;margin:auto;padding:22px}h1{margin:0 0 5px}.sub{color:#687386;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:330px 1fr;gap:16px}.card{background:#fff;border:1px solid #dce3ed;border-radius:15px;padding:15px}
+.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px}.card{background:#fff;border:1px solid #dce3ed;border-radius:15px;padding:15px}
 button,select{font:inherit;padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;background:white;cursor:pointer}
 #messiBtn.active{background:#f4b942;font-weight:700}.actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
 .list{max-height:500px;overflow:auto}.league{font-weight:750;margin:13px 0 4px}.player{display:flex;gap:8px;padding:5px 0;font-size:14px}
 .kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}.kpi{background:#f4f6fa;padding:8px 11px;border-radius:9px}
-svg{width:100%;height:auto}.axis{stroke:#8794a7}.curve{fill:none;stroke:#38598b;stroke-width:3}.mu{stroke:#4b5563;stroke-dasharray:5 5}
+svg{width:100%;height:auto}.axis{stroke:#8794a7}.curve{fill:none;stroke:#38598b;stroke-width:3}.kde{fill:none;stroke:#27866f;stroke-width:3}.active{background:#eaf0fa;font-weight:700}.mu{stroke:#4b5563;stroke-dasharray:5 5}
 .dot{fill:#d55262;stroke:#fff;stroke-width:2}.messi{fill:#f4b942;stroke:#7a4c00;stroke-width:3}.lab{font-size:11px;fill:#263449}.messiLab{font-size:14px;font-weight:800;fill:#7a4c00}
 table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}th,td{padding:7px;border-bottom:1px solid #edf0f4;text-align:left}
 .note{font-size:13px;color:#687386;margin:8px 0}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+
+.player{border-radius:7px;padding:6px 5px}.player:hover{background:#f5f7fb}
+.league{padding-top:8px;border-top:1px solid #edf0f4}
+.chart-title{font-size:15px;font-weight:750;margin:4px 0 0}
+.chart-sub{font-size:12px;color:#687386;margin:2px 0 6px}
+.player-detail{min-height:48px;margin:8px 0;padding:9px 11px;border-radius:10px;background:#f7f9fc;border:1px solid #e5eaf1;font-size:13px}
+.axis-title{font-size:12px;font-weight:700;fill:#4b5563}.tick{font-size:10px;fill:#687386}.tickline{stroke:#e5e9ef;stroke-width:1}
+.dot{cursor:pointer}.dot:hover{stroke:#172033;stroke-width:3}
+@media(max-width:900px){.grid{grid-template-columns:1fr!important}}
 </style></head><body><main>
-<h1>⚽ ¿Quién rompe la curva?</h1><div class="sub">Big 5 2025/26 · Goles + asistencias · Messi 2011/12 como comparación histórica</div>
+<h1>⚽ ¿Quién rompe la curva?</h1><div class="sub">Top 20 inicial · Big 5 2025/26 · Distribución empírica frente a normal teórica</div>
 <div class="grid"><section class="card">
 <label><b>Liga</b><br><select id="league"><option value="all">Todas</option><option>Premier League</option><option>LaLiga</option><option>Bundesliga</option><option>Serie A</option><option>Ligue 1</option></select></label>
-<div class="actions"><button id="all" type="button">Todos</button><button id="none" type="button">Ninguno</button></div>
+<div class="actions"><button id="top20" type="button">Top 20</button><button id="all" type="button">Todos (25)</button><button id="none" type="button">Ninguno</button></div>
+<div style="margin:10px 0"><b>Visualización</b><div class="actions">
+<button id="realBtn" type="button">Real (KDE)</button>
+<button id="normalBtn" type="button">Normal teórica</button>
+<button id="bothBtn" type="button" class="active">Ambas</button></div></div>
 <button id="messiBtn" type="button">⭐ Añadir Messi 2011/12</button>
-<div class="note">Messi: <b>69 G+A</b> (50 goles + 19 asistencias). No modifica μ ni DT: se compara contra la distribución seleccionada.</div>
+<div class="note">Messi: <b>69 G+A</b> (50 goles + 19 asistencias).
+<div style="margin-top:8px"><label><b>Messi:</b> <select id="messiMode"><option value="external">Comparación externa</option><option value="sample">Incluir en la muestra</option></select></label></div></div>
 <div id="list" class="list"></div></section>
-<section class="card"><div class="kpis"><div class="kpi">n = <b id="n"></b></div><div class="kpi">Media = <b id="mean"></b></div><div class="kpi">DT = <b id="sd"></b></div><div class="kpi">Z Messi = <b id="mz">—</b></div></div>
+<section class="card"><div class="kpis"><div class="kpi">n = <b id="n"></b></div><div class="kpi">Media = <b id="mean"></b></div><div class="kpi">Mediana = <b id="median">—</b></div><div class="kpi">DT = <b id="sd"></b></div><div class="kpi">Asimetría = <b id="skew">—</b></div><div class="kpi">Curtosis† = <b id="kurt">—</b></div><div class="kpi">Z Messi = <b id="mz">—</b></div></div>
+<div class="chart-title">Distribución de Goles + Asistencias</div>
+<div class="chart-sub">Pulsa sobre cualquier punto para identificar al jugador. Solo se etiquetan automáticamente los valores más extremos para evitar solapamientos.</div>
+<div class="legend"><span><i class="sw" style="border-color:#27866f"></i>Distribución real (KDE)</span><span><i class="sw" style="border-color:#315d9a"></i>Normal teórica</span></div><div id="playerDetail" class="player-detail">Selecciona un punto de la gráfica para ver jugador, liga, club, G+A y puntuación Z.</div>
 <svg id="chart" viewBox="0 0 820 430"></svg>
 <table><thead><tr><th>Jugador</th><th>Liga</th><th>G+A</th><th>Z</th></tr></thead><tbody id="tbody"></tbody></table>
 </section></div></main>
 <script>
 (function(){
 const players=[{"league": "Premier League", "name": "Erling Haaland", "club": "Manchester City", "ga": 35}, {"league": "Premier League", "name": "Bruno Fernandes", "club": "Manchester United", "ga": 30}, {"league": "Premier League", "name": "Igor Thiago", "club": "Brentford", "ga": 23}, {"league": "Premier League", "name": "Antoine Semenyo", "club": "Manchester City", "ga": 21}, {"league": "Premier League", "name": "João Pedro", "club": "Chelsea", "ga": 20}, {"league": "LaLiga", "name": "Kylian Mbappé", "club": "Real Madrid", "ga": 30}, {"league": "LaLiga", "name": "Lamine Yamal", "club": "Barcelona", "ga": 27}, {"league": "LaLiga", "name": "Vedat Muriqi", "club": "Mallorca", "ga": 24}, {"league": "LaLiga", "name": "Vinícius Júnior", "club": "Real Madrid", "ga": 21}, {"league": "LaLiga", "name": "Mikel Oyarzabal", "club": "Real Sociedad", "ga": 19}, {"league": "Bundesliga", "name": "Harry Kane", "club": "Bayern München", "ga": 41}, {"league": "Bundesliga", "name": "Michael Olise", "club": "Bayern München", "ga": 34}, {"league": "Bundesliga", "name": "Luis Díaz", "club": "Bayern München", "ga": 29}, {"league": "Bundesliga", "name": "Deniz Undav", "club": "VfB Stuttgart", "ga": 26}, {"league": "Bundesliga", "name": "Christoph Baumgartner", "club": "RB Leipzig", "ga": 22}, {"league": "Serie A", "name": "Federico Dimarco", "club": "Inter", "ga": 24}, {"league": "Serie A", "name": "Lautaro Martínez", "club": "Inter", "ga": 23}, {"league": "Serie A", "name": "Marcus Thuram", "club": "Inter", "ga": 19}, {"league": "Serie A", "name": "Nico Paz", "club": "Como", "ga": 18}, {"league": "Serie A", "name": "Rasmus Højlund", "club": "Napoli", "ga": 17}, {"league": "Ligue 1", "name": "Estéban Lepaul", "club": "Rennes", "ga": 26}, {"league": "Ligue 1", "name": "Mason Greenwood", "club": "Marseille", "ga": 23}, {"league": "Ligue 1", "name": "Florian Thauvin", "club": "Lens", "ga": 17}, {"league": "Ligue 1", "name": "Joaquín Panichelli", "club": "Strasbourg", "ga": 17}, {"league": "Ligue 1", "name": "Folarin Balogun", "club": "Monaco", "ga": 17}];
-const selected=new Set(players.map((p,i)=>i));
-let showMessi=false;
+const top20idx=players.map((p,i)=>({i,ga:p.ga})).sort((a,b)=>b.ga-a.ga).slice(0,20).map(x=>x.i);
+const selected=new Set(top20idx);
+let showMessi=false, viewMode="both";
 const MESSI=69;
 const list=document.getElementById('list'), league=document.getElementById('league'), svg=document.getElementById('chart');
 function renderList(){
@@ -44,26 +62,53 @@ function renderList(){
    });
  });
 }
+function median(v){const b=[...v].sort((a,b)=>a-b),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2;}
 function draw(){
- const a=[...selected].map(i=>players[i]);
- document.getElementById('n').textContent=a.length;
- if(a.length<2){document.getElementById('mean').textContent='—';document.getElementById('sd').textContent='—';document.getElementById('mz').textContent='—';svg.innerHTML='<text x="410" y="210" text-anchor="middle">Selecciona al menos 2 jugadores</text>';return;}
- const vals=a.map(p=>p.ga), mean=vals.reduce((x,y)=>x+y,0)/vals.length;
- const sd=Math.sqrt(vals.reduce((s,x)=>s+(x-mean)**2,0)/(vals.length-1));
- document.getElementById('mean').textContent=mean.toFixed(2);document.getElementById('sd').textContent=sd.toFixed(2);
+ let a=[...selected].map(i=>players[i]);
+ const includeMessi=showMessi&&document.getElementById('messiMode').value==='sample';
+ let sample=includeMessi?[...a,{name:'Lionel Messi (2011/12)',league:'Histórico',ga:MESSI}]:[...a];
+ document.getElementById('n').textContent=sample.length;
+ if(sample.length<3){['mean','median','sd','skew','kurt','mz'].forEach(id=>document.getElementById(id).textContent='—');svg.innerHTML='<text x="410" y="210" text-anchor="middle">Selecciona al menos 3 jugadores</text>';return;}
+ const vals=sample.map(p=>p.ga), n=vals.length, mean=vals.reduce((x,y)=>x+y,0)/n;
+ const popsd=Math.sqrt(vals.reduce((q,x)=>q+(x-mean)**2,0)/n);
+ const sd=Math.sqrt(vals.reduce((q,x)=>q+(x-mean)**2,0)/(n-1));
+ const skew=popsd?vals.reduce((q,x)=>q+((x-mean)/popsd)**3,0)/n:0;
+ const kurt=popsd?vals.reduce((q,x)=>q+((x-mean)/popsd)**4,0)/n-3:0;
+ document.getElementById('mean').textContent=mean.toFixed(2);document.getElementById('median').textContent=median(vals).toFixed(2);
+ document.getElementById('sd').textContent=sd.toFixed(2);document.getElementById('skew').textContent=skew.toFixed(2);document.getElementById('kurt').textContent=kurt.toFixed(2);
  document.getElementById('mz').textContent=showMessi?((MESSI-mean)/sd).toFixed(2):'—';
- const left=55,right=30,base=330,W=820;
- const normalMin=mean-3.5*sd, normalMax=mean+3.5*sd;
- const xmin=Math.min(...vals,normalMin)-2, xmax=Math.max(...vals,normalMax,showMessi?MESSI:-Infinity)+3;
- const X=x=>left+(x-xmin)/(xmax-xmin)*(W-left-right);
- const pdf=x=>Math.exp(-0.5*((x-mean)/sd)**2);
- let d='';for(let j=0;j<=260;j++){const x=normalMin+(normalMax-normalMin)*j/260;const y=base-230*pdf(x);d+=(j?'L':'M')+X(x)+','+y;}
- svg.innerHTML='<line x1="'+left+'" y1="'+base+'" x2="'+(W-right)+'" y2="'+base+'" class="axis"/><path d="'+d+'" class="curve"/><line x1="'+X(mean)+'" y1="80" x2="'+X(mean)+'" y2="'+base+'" class="mu"/>';
- [-3,-2,-1,0,1,2,3].forEach(z=>{const x=mean+z*sd;if(x>=xmin&&x<=xmax)svg.innerHTML+='<text x="'+X(x)+'" y="'+(base+22)+'" text-anchor="middle" class="lab">'+(z===0?'μ':(z>0?'+':'')+z+'σ')+'</text>';});
- a.forEach((p,k)=>{const x=X(p.ga),y=base-230*pdf(p.ga);svg.innerHTML+='<circle cx="'+x+'" cy="'+y+'" r="6" class="dot"/><text x="'+x+'" y="'+Math.max(20,y-10-(k%3)*13)+'" text-anchor="middle" class="lab">'+p.name+'</text>';});
- if(showMessi){const x=X(MESSI);svg.innerHTML+='<line x1="'+x+'" y1="95" x2="'+x+'" y2="'+base+'" stroke="#f4b942" stroke-width="2" stroke-dasharray="5 4"/><circle cx="'+x+'" cy="'+base+'" r="10" class="messi"/><text x="'+x+'" y="72" text-anchor="middle" class="messiLab">MESSI 2011/12 · 69 G+A</text>';}
- document.getElementById('tbody').innerHTML=[...a].sort((x,y)=>y.ga-x.ga).map(p=>'<tr><td>'+p.name+'</td><td>'+p.league+'</td><td>'+p.ga+'</td><td>'+((p.ga-mean)/sd).toFixed(2)+'</td></tr>').join('');
+ const left=55,right=30,base=330,W=820,top=70, rawMin=Math.min(...vals),rawMax=Math.max(...vals,showMessi?MESSI:-Infinity),span=Math.max(8,rawMax-rawMin);
+ const xmin=Math.max(0,rawMin-span*.22),xmax=rawMax+span*.18,X=x=>left+(x-xmin)/(xmax-xmin)*(W-left-right);
+ const sorted=[...vals].sort((x,y)=>x-y),q1=sorted[Math.floor((n-1)*.25)],q3=sorted[Math.floor((n-1)*.75)],iqr=q3-q1;
+ const robust=Math.min(popsd,iqr>0?iqr/1.34:popsd)||1,h=Math.max(.8,.9*robust*Math.pow(n,-.2));
+ const g=u=>Math.exp(-.5*u*u)/Math.sqrt(2*Math.PI),kde=x=>vals.reduce((q,v)=>q+g((x-v)/h),0)/(n*h);
+ const normal=x=>Math.exp(-.5*((x-mean)/sd)**2)/(sd*Math.sqrt(2*Math.PI));
+ let pts=[],maxD=0;for(let j=0;j<=280;j++){let x=xmin+(xmax-xmin)*j/280,k=kde(x),nd=normal(x);pts.push({x,k,nd});maxD=Math.max(maxD,k,nd);}
+ const Y=d=>base-(d/maxD)*(base-top);let kp='',np='';pts.forEach((p,j)=>{kp+=(j?'L':'M')+X(p.x)+','+Y(p.k);np+=(j?'L':'M')+X(p.x)+','+Y(p.nd);});
+ svg.innerHTML='<line x1="'+left+'" y1="'+base+'" x2="'+(W-right)+'" y2="'+base+'" class="axis"/>';
+ if(viewMode==='real'||viewMode==='both')svg.innerHTML+='<path d="'+kp+'" class="kde"/>';
+ if(viewMode==='normal'||viewMode==='both')svg.innerHTML+='<path d="'+np+'" class="curve"/>';
+ svg.innerHTML+='<line x1="'+X(mean)+'" y1="'+top+'" x2="'+X(mean)+'" y2="'+base+'" class="mu"/><text x="'+X(mean)+'" y="'+(base+22)+'" text-anchor="middle" class="lab">μ</text>';
+ const tickStep=10;
+ for(let tv=Math.ceil(xmin/tickStep)*tickStep;tv<=xmax;tv+=tickStep){
+   svg.innerHTML+='<line x1="'+X(tv)+'" y1="'+base+'" x2="'+X(tv)+'" y2="'+(base+5)+'" class="axis"/><text x="'+X(tv)+'" y="'+(base+19)+'" text-anchor="middle" class="tick">'+tv+'</text>';
+ }
+ svg.innerHTML+='<text x="'+((left+W-right)/2)+'" y="'+(base+45)+'" text-anchor="middle" class="axis-title">Goles + Asistencias (G+A)</text>';
+ const ranked=[...a].sort((u,v)=>v.ga-u.ga);
+ const labelNames=new Set(ranked.slice(0,5).map(p=>p.name));
+ a.forEach((p,k)=>{let x=X(p.ga), idx=players.indexOf(p);
+   svg.innerHTML+='<circle cx="'+x+'" cy="'+base+'" r="6" class="dot" data-player="'+idx+'"/>';
+   if(labelNames.has(p.name)) svg.innerHTML+='<text x="'+x+'" y="'+(base-15-(k%3)*15)+'" text-anchor="middle" class="lab">'+p.name+'</text>';
+ });
+ if(showMessi){let x=X(MESSI);svg.innerHTML+='<line x1="'+x+'" y1="95" x2="'+x+'" y2="'+base+'" stroke="#f4b942" stroke-width="2" stroke-dasharray="5 4"/><circle cx="'+x+'" cy="'+base+'" r="10" class="messi"/><text x="'+x+'" y="72" text-anchor="middle" class="messiLab">MESSI · 69 G+A</text>';}
+ document.getElementById('tbody').innerHTML=[...sample].sort((x,y)=>y.ga-x.ga).map(p=>'<tr><td>'+p.name+'</td><td>'+p.league+'</td><td>'+p.ga+'</td><td>'+((p.ga-mean)/sd).toFixed(2)+'</td></tr>').join('');
+ svg.querySelectorAll('[data-player]').forEach(el=>el.addEventListener('click',()=>{
+   const p=players[Number(el.dataset.player)],z=(p.ga-mean)/sd;
+   document.getElementById('playerDetail').innerHTML='<b>'+p.name+'</b> · '+p.club+' · '+p.league+' &nbsp; | &nbsp; <b>'+p.ga+' G+A</b> &nbsp; | &nbsp; Z = <b>'+z.toFixed(2)+'</b>';
+ }));
 }
+['real','normal','both'].forEach(m=>document.getElementById(m+'Btn').addEventListener('click',function(){viewMode=m;['real','normal','both'].forEach(x=>document.getElementById(x+'Btn').classList.toggle('active',x===m));draw();}));
+document.getElementById('messiMode').addEventListener('change',draw);
 document.getElementById('messiBtn').addEventListener('click',function(){
  showMessi=!showMessi;this.classList.toggle('active',showMessi);this.textContent=showMessi?'⭐ Quitar Messi 2011/12':'⭐ Añadir Messi 2011/12';draw();
 });
